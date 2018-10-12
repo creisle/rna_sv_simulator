@@ -39,10 +39,10 @@ Checkout the latest release from Github
 $ git clone https://github.com/creisle/rna_sv_simulator.git ./
 ```
 
-With the virtual env, install the repo with editable permissions
+With the virtual env, install the package with editable permissions
 
 ```
-$ pip install -e ./
+$ pip install -e .[dev]
 ```
 
 ## Deployment
@@ -60,12 +60,12 @@ Please read [CONTRIBUTING.md](https://github.com/creisle/) for details on our co
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. 
+We use [SemVer](http://semver.org/) for versioning.
 
 ## Authors
 
 * **Cara Reisle** - *Team lead* - [GitHub](https://github.com/creisle)
-* **Morgan Bye** - *Voice of experience* - [morganbye.com](http://morganbye.com) 
+* **Morgan Bye** - *Voice of experience* - [morganbye.com](http://morganbye.com)
 
 See also the list of [contributors](https://github.com/creisle/rna_sv_simulator/contributors) who participated in this project.
 

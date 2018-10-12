@@ -109,3 +109,11 @@ venv.bak/
 .mypy_cache/
 .dmypy.json
 dmypy.json
+
+# editors
+.idea
+.vscode
+.vs
+
+# mac stuff
+.DS_STORE

@@ -1,10 +1,6 @@
 # RNA SV Simulator
 
-![PyPi](https://img.shields.io/pypi/v/rna_sv_simulator.svg){:target="https://pypi.python.org/pypi/rna_sv_simulator"}
-
-![Travis](https://img.shields.io/travis/morganbye/rna_sv_simulator.svg){:target="https://travis-ci.org/morganbye/rna_sv_simulator"}
-
-![ReadTheDocs](https://readthedocs.org/projects/rna-sv-simulator/badge/?version=latest){:target="https://rna-sv-simulator.readthedocs.io/en/latest/?badge=latest"}
+![PyPi](https://img.shields.io/pypi/v/rna_sv_simulator.svg) ![Travis](https://img.shields.io/travis/morganbye/rna_sv_simulator.svg) ![ReadTheDocs](https://readthedocs.org/projects/rna-sv-simulator/badge/?version=latest)
 
 
 Simulating transcriptome structural variants

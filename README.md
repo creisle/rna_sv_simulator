@@ -25,18 +25,18 @@ purposes. See deployment for notes on how to deploy the project on a live system
 
 ### Installing
 
-Create a new virtual env
-
-```bash
-$ mkdir rna_sv_sim
-$ python3 -m venv rna_sv_sim/
-$ source rna_sv_sim/bin/activate
-```
-
 Checkout the latest release from Github
 
 ```bash
-$ git clone https://github.com/creisle/rna_sv_simulator.git ./
+$ git clone https://github.com/creisle/rna_sv_simulator.git
+$ cd rna_sv_simulator
+```
+
+Create a new virtual env
+
+```bash
+$ python3 -m venv venv/
+$ source venv/bin/activate
 ```
 
 With the virtual env, install the package with editable permissions

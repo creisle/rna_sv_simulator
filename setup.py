@@ -8,9 +8,6 @@ from setuptools import setup, find_packages
 with open('README.md') as readme_file:
     readme = readme_file.read()
 
-with open('HISTORY.rst') as history_file:
-    history = history_file.read()
-
 requirements = ['Click>=6.0', ]
 
 setup_requirements = ['pytest-runner', ]
@@ -46,7 +43,6 @@ setup(
             'coverage==4.5.1',
             'Sphinx==1.7.1',
             'twine==1.10.0',
-
             'pytest==3.4.2',
             'pytest-runner==2.11.1'
         ]

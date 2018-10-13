@@ -1,0 +1,3 @@
+The bundle directory contains files needed for Flux Simulator (.par/.pro files, genome directory, annotation.gtf file).
+
+The file `ensembl69_patches.txt` includes supplementary chromosomal DNA contigs.

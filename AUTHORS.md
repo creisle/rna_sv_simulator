@@ -7,8 +7,6 @@
 
 ## Original HackSeq-ers
 
-* **Yee Mey Seah** - [GitHub](https://github.com/yeemey)
-* **Matthew Nguyen** - [GitHub](https://github.com/matnguyen)
 * **My Linh Thibodeau** - [GitHub](https://github.com/mylinhthibodeau)
 * **Sibyl Drissler** - [GitHub](https://github.com/sibylgisela)
 * **Abigail Reisle** - [GitHub](https://github.com/areisle)

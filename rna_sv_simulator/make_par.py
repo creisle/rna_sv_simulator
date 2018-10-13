@@ -27,17 +27,23 @@ def make_par(ref_file_name="annotation.gtf",
 
     properties = {**locals(), **kwargs}
     properties.pop("kwargs")
-
+    current_par = os.path.join(BUNDLE_PATH, PAR_FILE)    
+    
     # Clear stale file
-    if os.path.isfile(PAR_FILE):
-        os.remove(PAR_FILE)
+    if os.path.isfile(current_par):
+        print("Removing .par file")
+        os.remove(current_par)
+    else:
+        print("File does not exist")
+        
+    print("Creating new .par file at", current_par)
 
     for key, value in properties.items():
         print_key_value(key=key.upper(), value=value, output_file=PAR_FILE)
 
 
 def print_row(elements, output_filename, delimiter='\t'):
-    """Print elements to output_file, delimited by delimiter."""
+    """Print elements to output_filename within the BUNDLE_PATH directory, delimited by delimiter."""
     with open(os.path.join(BUNDLE_PATH, output_filename), 'a') as output_file:
         if elements is not None:
             output_file.write(delimiter.join([str(x) for x in elements]))  # Data row

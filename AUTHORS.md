@@ -7,15 +7,15 @@
 
 ## Original HackSeq-ers
 
-* **Yee Mey Seah** - [GitHub](yeemey)
-* **Matthew Nguyen** - [GitHub](matnguyen)
-* **My Linh Thibodeau** - [GitHub](mylinhthibodeau)
-* **Sibyl Drissler** - [GitHub](sibylgisela)
-* **Abigail Reisle** - [GitHub](areisle)
-* **Manuel Belmadani** - [GitHub](mbelmadani)
+* **Yee Mey Seah** - [GitHub](https://github.com/yeemey)
+* **Matthew Nguyen** - [GitHub](https://github.com/matnguyen)
+* **My Linh Thibodeau** - [GitHub](https://github.com/mylinhthibodeau)
+* **Sibyl Drissler** - [GitHub](https://github.com/sibylgisela)
+* **Abigail Reisle** - [GitHub](https://github.com/areisle)
+* **Manuel Belmadani** - [GitHub](https://github.com/mbelmadani)
 * **Priyanka Mishra**
-* **Enes Kemal Ergin** - [GitHub](eneskemalergin)
-* **Simran Sethi** - [GitHub](simrnsethi)
+* **Enes Kemal Ergin** - [GitHub](https://github.com/eneskemalergin)
+* **Simran Sethi** - [GitHub](https://github.com/simrnsethi)
 
 ## Contributors
 

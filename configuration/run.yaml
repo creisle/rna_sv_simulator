@@ -1,0 +1,11 @@
+paths:
+  dir_run: '~/testing/rna_sv_simulator'
+  file_par_name: 'flux_settings.par'
+
+flux:
+  parameters:
+    number_molecules: 100000
+    number_reads: 10000
+    number_read_length: 150
+    err_file: 76
+    fasta: 'YES'

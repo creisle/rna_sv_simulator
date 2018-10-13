@@ -1,3 +1,10 @@
 # -*- coding: utf-8 -*-
+import sys
 
-"""Main module."""
+
+def main():
+    """Main module"""
+
+
+if __name__ == "__main__":
+    sys.exit(main())

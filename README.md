@@ -1,6 +1,6 @@
 # RNA SV Simulator
 
-![PyPi](https://img.shields.io/pypi/v/rna_sv_simulator.svg) ![Travis](https://img.shields.io/travis/morganbye/rna_sv_simulator.svg) ![ReadTheDocs](https://readthedocs.org/projects/rna-sv-simulator/badge/?version=latest)
+![PyPi](https://img.shields.io/pypi/v/rna_sv_simulator.svg) ![Travis](https://travis-ci.org/creisle/rna_sv_simulator.svg) ![ReadTheDocs](https://readthedocs.org/projects/rna-sv-simulator/badge/?version=latest)
 
 
 Simulating transcriptome structural variants
@@ -22,6 +22,8 @@ purposes. See deployment for notes on how to deploy the project on a live system
 ### Prerequisites
 
 - Python3.5+
+- [Flux Simulator (tested with v1.2.2)](http://confluence.sammeth.net/display/SIM/2+-+Download)
+
 
 ### Installing
 

@@ -1,7 +1,7 @@
 import os
 import pytest
 
-import rna_sv_simulator.io.load_config as load_config
+import rna_sv_simulator.io.load_config
 
 
 class TestLoadEnvConfig:
@@ -9,7 +9,7 @@ class TestLoadEnvConfig:
 
     def test_get_config(self):
 
-        result = load_config.load_env_config()
+        result = rna_sv_simulator.io.load_config.load_env_config()
 
         assert isinstance(result, dict)
         assert 'flux' in result
@@ -21,7 +21,7 @@ class TestGetDefaultConfigLocation:
     def test_get_config_dir(self):
         """Get default"""
 
-        result = load_config.get_default_config_location()
+        result = rna_sv_simulator.io.load_config.get_default_config_location()
 
         assert isinstance(result, str)
         assert os.path.isdir(result) is True
@@ -33,7 +33,7 @@ class TestGetDefaultEnvConfigPath:
     def test_get_env_config_path(self):
         """Get default"""
 
-        result = load_config.get_default_env_config_path()
+        result = rna_sv_simulator.io.load_config.get_default_env_config_path()
 
         assert isinstance(result, str)
         assert os.path.isfile(result) is True
@@ -43,12 +43,12 @@ class TestGetDefaultEnvConfigPath:
 class TestLoadEnvYaml:
     """Tests for load_env_yaml"""
 
-    yaml_file = load_config.get_default_env_config_path()
+    yaml_file = rna_sv_simulator.io.load_config.get_default_env_config_path()
 
     def test_valid_yaml(self):
         """Valid YAML"""
 
-        result = load_config.load_env_yaml(self.yaml_file)
+        result = rna_sv_simulator.io.load_config.load_env_yaml(self.yaml_file)
 
         assert isinstance(result, dict)
         assert 'flux' in result

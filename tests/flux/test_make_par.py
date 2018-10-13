@@ -5,7 +5,7 @@ import tempfile
 from hypothesis import strategies as st
 from hypothesis import given
 
-import rna_sv_simulator.flux.make_par as make_par
+import rna_sv_simulator.flux.make_par
 
 ENV_CONFIG = {
     'flux': {
@@ -63,13 +63,13 @@ class TestMakeParFile:
         tmp_dir = tempfile.mktemp()
         run_config['paths']['dir_run'] = tmp_dir
 
-        make_par.make_par_file(env_config, run_config)
+        rna_sv_simulator.flux.make_par.make_par_file(env_config, run_config)
 
 
 class TestBuildParameterDict:
     """Tests for build_parameter_dict"""
 
-    result = make_par.build_parameter_dict(ENV_CONFIG, RUN_CONFIG)
+    result = rna_sv_simulator.flux.make_par.build_parameter_dict(ENV_CONFIG, RUN_CONFIG)
 
     assert isinstance(result, dict)
     assert 'fasta' in result
@@ -87,14 +87,14 @@ class TestListOfItemsInDict:
     def test_item_in_dict(self):
 
         required = ['foo']
-        make_par(required, self.input_dict)
+        rna_sv_simulator.flux.make_par.test_list_of_items_in_dict(required, self.input_dict)
 
     def test_item_not_in_dict(self):
 
         required = ['baz']
 
         with pytest.raises(ValueError):
-            make_par(required, self.input_dict)
+            rna_sv_simulator.flux.make_par.test_list_of_items_in_dict(required, self.input_dict)
 
 
 class TestBuildParString:
@@ -106,7 +106,7 @@ class TestBuildParString:
         }
         delimiter = '\t'
 
-        result = make_par.build_par_string(parameters, delimiter)
+        result = rna_sv_simulator.flux.make_par.build_par_string(parameters, delimiter)
 
         assert delimiter in result
         assert parameters.get('foo') in result

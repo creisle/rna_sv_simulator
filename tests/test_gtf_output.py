@@ -42,6 +42,4 @@ class TestOutputGtfFile(unittest.TestCase):
             gtf_output.output_gtf_file(self.annotations, '../letters')
         m.assert_called_with('../letters', 'w')
         handle_file = m()
-        handle_file.write.assert_called_with(self.annotations)
-
-    
+        handle_file.write.assert_called_with('12\tprocessed_transcript\texon\t175931\t176602\t.\t+\t.\tgene_id\t"ENSG00000120645";gene_name "IQSEC3";gene_start "175931";gene_end "287626";transcript_id "ENST00000538872";transcript_start "175931";transcript_end "287626";exon_index "1"')

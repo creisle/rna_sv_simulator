@@ -12,7 +12,7 @@ REQUIREMENTS = [
     'mavis>=2.1.4'
 ]
 
-SETUP_REQUIREMENTS = ['pytest-runner', ]
+SETUP_REQUIREMENTS = ['pytest-runner']
 
 TEST_REQUIREMENTS = [
     'pip==9.0.1',
@@ -30,8 +30,8 @@ TEST_REQUIREMENTS = [
 ]
 
 setup(
-    author="Morgan Bye",
-    author_email='morgan@morganbye.com',
+    author="Cara Reisle",
+    author_email='creisle@bcgsc.ca',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
@@ -48,7 +48,7 @@ setup(
         ],
     },
     extras_require={
-        'dev': TEST_REQUIREMENTS 
+        'dev': TEST_REQUIREMENTS
     },
     install_requires=REQUIREMENTS,
     license="GNU General Public License v3",
@@ -60,7 +60,8 @@ setup(
     setup_requires=SETUP_REQUIREMENTS,
     test_suite='tests',
     tests_require=TEST_REQUIREMENTS,
-    url='https://github.com/morganbye/rna_sv_simulator',
+    url='https://github.com/creisle/rna_sv_simulator',
+
     version='0.1.0',
     zip_safe=False,
 )

@@ -1,0 +1,8 @@
+# Directories
+flux-bundle/
+
+# Files
+*~
+#*
+*.bak
+

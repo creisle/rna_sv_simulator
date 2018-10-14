@@ -2,8 +2,10 @@
 create the fusion chromosome and re-mapping of the genes on the mutant chrs
 '''
 from mavis.constants import SVTYPE, ORIENT, STRAND
+from mavis import constants
 from mavis.annotate import fusion as _fusion
 from mavis.annotate import genomic as _genomic
+from mavis import breakpoint as _breakpoint
 
 
 def determine_breakpoint_prime(breakpoint_pair):
@@ -37,15 +39,44 @@ def get_chr_seq(breakpoint, reference_genome):
     if breakpoint.orient == ORIENT.LEFT:
         seq = reference_genome[breakpoint.chr].seq[:breakpoint.end]
     else:
-        seq = reference_genome[breakpoint.chr].seq[breakpoint.start:]
+        seq = reference_genome[breakpoint.chr].seq[breakpoint.start - 1:]
 
     if breakpoint.strand == STRAND.NEG:
-        seq = reverse_complement(seq)
+        seq = constants.reverse_complement(seq)
     return seq
 
 
-def _mutate_translocation(reference_genome, annotations, breakpoint_pair):
+def get_reciprocal(breakpoint_pair):
+    '''
+    Given a breakpoint pair representing a translocation
+    return a breakpoint pair representing its reciprocal
+    '''
+    shift1 = 1 if breakpoint_pair.break1.orient == ORIENT.LEFT else -1
+    break1 = _breakpoint.Breakpoint(
+        breakpoint_pair.break1.chr,
+        breakpoint_pair.break1.start + shift1,
+        breakpoint_pair.break1.end + shift1,
+        strand=breakpoint_pair.break1.strand,
+        orient=ORIENT.LEFT if breakpoint_pair.break1.orient == ORIENT.RIGHT else ORIENT.RIGHT
+    )
+    shift2 = 1 if breakpoint_pair.break2.orient == ORIENT.LEFT else -1
+    break2 = _breakpoint.Breakpoint(
+        breakpoint_pair.break2.chr,
+        breakpoint_pair.break2.start + shift2,
+        breakpoint_pair.break2.end + shift2,
+        strand=breakpoint_pair.break2.strand,
+        orient=ORIENT.LEFT if breakpoint_pair.break2.orient == ORIENT.RIGHT else ORIENT.RIGHT
+    )
+    return _breakpoint.BreakpointPair(
+        break1, break2,
+        stranded=breakpoint_pair.stranded,
+        untemplated_seq=breakpoint_pair.untemplated_seq,
+        opposing_strands=breakpoint_pair.opposing_strands,
+        **breakpoint_pair.data
+    )
 
+
+def _mutate_translocation(reference_genome, annotations, breakpoint_pair):
     new_chrom_refseq = ''
     new_annotations = []
 
@@ -53,36 +84,64 @@ def _mutate_translocation(reference_genome, annotations, breakpoint_pair):
     break2 = breakpoint_pair.break2
 
     break1_is_five_prime = determine_breakpoint_prime(breakpoint_pair)
-    break1_offset = 0
-    break2_offset = 0
 
     # create the new sequence
-    if break1_is_five_prime:
-        new_chrom_refseq = get_chr_seq(break1, reference_genome) + get_chr_seq(break2, reference_genome)
-    else:
-        new_chrom_refseq = get_chr_seq(break2, reference_genome) + get_chr_seq(break1, reference_genome)
+    break1_seq = get_chr_seq(break1, reference_genome)
+    break2_seq = get_chr_seq(break2, reference_genome)
 
     # shift all the gene annotations based on the new chr
     if not break1_is_five_prime:
         break1, break2 = break2, break1
+        break1_seq, break2_seq = break2_seq, break1_seq
 
-    for gene in annotations[break1chr]:
-        if break1.orient == ORIENT.LEFT:
-            new_annotations.append(gene)
+    new_annotations = []
+
+    for gene in annotations[break1.chr]:
+        # only move the genes retained and not covering the breakpoint
+        if break1.orient == ORIENT.LEFT:   # positive strand
+            if gene.end <= break1.start:
+                new_gene = shift_gene(gene, lambda pos: pos)
+                break1_seq += breakpoint_pair.untemplated_seq
+            else:
+                continue
+        elif gene.start >= break1.end:   # negative strand
+            offset = lambda pos: len(reference_genome[break1.chr].seq) - pos
+            new_gene = shift_gene(gene, offset, True)
+            break1_seq += constants.reverse_complement(breakpoint_pair.untemplated_seq)
         else:
-            new_annotations.append(
-                shift_gene(gene, lambda x: len(reference_genome[break1.chr].seq) - x)
-            )
+            continue
 
+        new_annotations.append(new_gene)
+
+    for gene in annotations[break2.chr]:
+        # only move the genes retained and not covering the breakpoint
+        if break2.orient == ORIENT.RIGHT:  # positive strand
+            if gene.start >= break2.end:
+                offset = lambda pos: len(break1_seq) + pos - break2.end
+                new_gene = shift_gene(gene, offset)
+            else:
+                continue
+        elif gene.end <= break2.start:  # negative strand
+            offset = lambda pos: len(break1_seq) + break2.end - pos
+            new_gene = shift_gene(gene, offset, True)
+        else:
+            continue
+
+        new_annotations.append(new_gene)
+
+    return break1_seq + break2_seq, new_annotations
 
 
 def shift_gene(gene, offset_func, flipped=False):
     '''
-
+    Given some gene and a function calculating the shift in a genomic position
+    return a new gene with positions of the gene and child exons moved
     '''
-    new_strand = gene.strand
     if flipped:
         new_strand = STRAND.POS if gene.strand == STRAND.NEG else STRAND.NEG
+    else:
+        new_strand = gene.strand
+
     new_gene = _genomic.Gene(
         gene.chr,
         offset_func(gene.end if flipped else gene.start),
@@ -95,12 +154,12 @@ def shift_gene(gene, offset_func, flipped=False):
         new_exons = []
         for exon in transcript.exons:
             new_exon = _genomic.Exon(
-                offset_func(gene.end if flipped else gene.start),
-                offset_func(gene.start if flipped else gene.end),
+                offset_func(exon.end if flipped else exon.start),
+                offset_func(exon.start if flipped else exon.end),
                 strand=new_strand,
                 name=exon.name
             )
-            new_exons.append(exon)
+            new_exons.append(new_exon)
         new_pre_transcript = _genomic.PreTranscript(
             exons=new_exons,
             gene=new_gene,
@@ -109,12 +168,8 @@ def shift_gene(gene, offset_func, flipped=False):
         )
         new_gene.unspliced_transcripts.append(new_pre_transcript)
         for splicing_pattern in new_pre_transcript.generate_splicing_patterns():
-            new_pre_transcript.transcripts.append(
-                _genomic.Transcript(
-                    new_pre_transcript,
-                    splicing_pattern
-                )
-            )
+            t = _genomic.Transcript(new_pre_transcript, splicing_pattern)
+            new_pre_transcript.transcripts.append(t)
     return new_gene
 
 

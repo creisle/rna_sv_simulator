@@ -203,6 +203,9 @@ exp_gtf['Length'] = exp_gtf['tx_end'] - exp_gtf['tx_start']
 # FINAL PRO 
 PRO_final = exp_gtf[['Locus', 'transcript_id', 'Coding', 'Length', 'Expressed Fraction - Transcript', 'Expressed Number - Transcript']]
 
+## Remove all transcripts < 10 nt 
+PRO_final_clean = PRO_final[PRO_final['Length'] >= 10]
+
 PRO_final_clean['Expressed Number - Transcript'] = (PRO_final_clean['Expressed Number - Transcript']).astype(int)
 # Compute total number of molecules 
 total_N_MOLECULES = sum(PRO_final_clean['Expressed Number - Transcript']).astype(int)

@@ -16,9 +16,9 @@ def main():
                         help="File with annotation data")
     parser.add_argument("-p", "--par", type=str, required=True,
                         help="File with par files")
-    parser.add_argument("-m", "--molecules", type=int, required=False,
+    parser.add_argument("-m", "--molecules", nargs=1, type=int, required=False,
                         help="Number of molecules for par files. Defaults to 100,000")
-    parser.add_argument("-r", "--read", type=int, required=False,
+    parser.add_argument("-r", "--read", nargs=1, type=int, required=False,
                         help="Read number. Defaults to 10,000")
     # sys.exit(())
 

@@ -77,7 +77,6 @@ def get_reciprocal(breakpoint_pair):
 
 
 def _mutate_translocation(reference_genome, annotations, breakpoint_pair):
-    new_chrom_refseq = ''
     new_annotations = []
 
     break1 = breakpoint_pair.break1
@@ -168,8 +167,9 @@ def shift_gene(gene, offset_func, flipped=False):
         )
         new_gene.unspliced_transcripts.append(new_pre_transcript)
         for splicing_pattern in new_pre_transcript.generate_splicing_patterns():
-            t = _genomic.Transcript(new_pre_transcript, splicing_pattern)
-            new_pre_transcript.transcripts.append(t)
+            new_pre_transcript.transcripts.append(
+                _genomic.Transcript(new_pre_transcript, splicing_pattern)
+            )
     return new_gene
 
 
@@ -201,5 +201,3 @@ def mutate(reference_genome, annotations, breakpoint_pair):
         return _mutate_translocation()
     else:
         return _mutate_continuous()
-
-

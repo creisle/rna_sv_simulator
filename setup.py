@@ -30,8 +30,8 @@ TEST_REQUIREMENTS = [
 ]
 
 setup(
-    author="Morgan Bye",
-    author_email='morgan@morganbye.com',
+    author="Cara Reisle",
+    author_email='creisle@bcgsc.ca',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',

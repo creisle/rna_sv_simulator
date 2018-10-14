@@ -4,13 +4,11 @@
 import os
 import sys
 
-FASTA_FILE = sys.argv[1]
-
-if __name__ == "__main__":
+def main(fasta_file):
     current_filename = None
     output_file = open(os.devnull, 'w')
 
-    with open(FASTA_FILE, 'r') as fasta:
+    with open(fasta_file, 'r') as fasta:
         for row in fasta:
             if row[0] == ">":  # Case where row is a header. Create new file.
                 current_filename = row.split(" ")[0]  # Get contig name.
@@ -23,3 +21,6 @@ if __name__ == "__main__":
 
             # Dump row to file.
             output_file.write(row)
+
+if __name__ == "__main__":
+    main(sys.argv[1])

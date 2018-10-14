@@ -1,55 +1,74 @@
-### Maybe adding parallel processing for each chromosome ???
+### TODO: Maybe adding parallel processing for each chromosome ???
+import os
+
+
 from mavis import constants
 from mavis.annotate import file_io, fusion, variant
 from mavis.breakpoint import Breakpoint, BreakpointPair
 
-def attribute_dict_to_str(attr_dict):
+GTF_EMPTY = '.'  # value used to denote an empty field
+
+
+def gtf_attr_to_string(attr_dict):
+    '''
+    Given some list of gtf attributes. Format them into a semi
+    colon delimited string
+    '''
     attributes_list = []
-    for key,values in attr_dict.items():
-        attributes_list.append(key + ' ' + '"' + values + '"')
+    for key, value in attr_dict.items():
+        attributes_list.append('{} "{}"'.format(key, value))
+    return ';'.join(attributes_list)
 
-    return ";".join(attributes_list)
 
-def output_gtf_file(annot_dict, output_path):
-    chromosome_id = '' # keeps the chromosome ids
-    trans_name = 'processed_transcript'
-    feature_type = 'exon' # Static since we are going to include all exons
-    start_pos = '' # Exon start position
-    end_pos = '' # Exon end position
-    score = '.'
-    strand = ''  # Exon Strand coming from gene_strand
-    frame = '.'
-    attribute = {} # This variable will be consists other variables to keep in gtf
-    file_ = open(output_path+"result.gtf", "w") # file name should be specified
-    for chromosome in annot_dict.keys():
-        chromosome_id = chromosome
-        for gene in annot_file_json[chrom]:
-            strand = gene.strand
-            attribute['gene_id'] = gene.name
-            attribute['gene_name'] = ",".join(gene.aliases)
-            attribute['gene_start'] = str(gene.start)
-            attribute['gene_end'] = str(gene.end)
+def output_gtf_file(annotations, output_path):
+    '''
+    Args:
+        annotations (dict or list of Gene by str): list of genes keyed by chromosome name
+        output_path (str): path the output annotations file
+    '''
 
-            for transcript in gene.transcripts:
-                attribute['transcript_id'] = transcript.name
-                attribute['transcript_start'] = str(transcript.start)
-                attribute['transcript_end'] = str(transcript.end)
+    header = ['seqname', 'source', 'feature', 'start', 'end', 'score', 'strand', 'frame', 'attribute']
 
-                for spliced_transcript in transcript.spliced_transcripts:
-                    itr_cnt = 1
-                    for exon in spliced_transcript.exons:
-                        start_pos = str(exon.start)
-                        end_pos = str(exon.end)
-                        attribute['exon_index'] = str(itr_cnt)
-                        itr_cnt += 1
+    row = {'source': 'rna_sv_simulator', 'attribute': {}}
 
-                        ## Writing it to a file:
-                        attribute_str = attribute_dict_to_str(attribute)
+    with open(output_path, 'w') as fh:
+        for chrom in annotations:
+            row['seqname'] = chrom
+            for gene in annotations[chrom]:
+                strand = gene.strand
+                row['attribute'].update({
+                    'gene_id': gene.name,
+                    'gene_name': ','join(gene.aliases),
+                    'gene_start': gene.start,
+                    'gene_end': gene.end
+                })
 
-                        row_info = (chromosome_id + '\t' + trans_name + '\t' + feature_type + '\t'
-                                    + start_pos + '\t' + end_pos + '\t' + score + '\t' + strand + '\t'
-                                    + frame + '\t' + attribute_str + '\n')
+                for pre_transcript in gene.transcripts:
+                    row['attribute'].update({
+                        'transcript_id': pre_transcript.name,
+                        'transcript_start': pre_transcript.start,
+                        'transcript_end': pre_transcript.end
+                    })
 
-                        file_.write(row_info) # Write to a file
+                    for spliced_transcript in transcript.spliced_transcripts:
+                        for exon in spliced_transcript.exons:
+                            row.update({
+                                'start': exon.start,
+                                'end': exon.end
+                            })
 
-    file_.close()
+                            start_pos = str(exon.start)
+                            end_pos = str(exon.end)
+                            row['attribute'].update({
+                                'exon_number': pre_transcript.exon_number(exon),
+                                'exon_id': exon.name
+                            })
+
+                            row_copy = {}
+                            row_copy.update(row)
+                            row_copy['attribute'] = gtf_attr_to_string(row_copy['attribute'])
+
+                            fh.write('\t'.join([
+                                str(row_copy.get(col, GTF_EMPTY)) for col in header
+                            ]) + '\n')
+

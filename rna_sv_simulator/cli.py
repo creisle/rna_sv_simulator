@@ -36,7 +36,7 @@ def main():
         help='Choose a default error model which are provided by flux for the corresponding read lengths'
     )
     flux_args.add_argument(
-        '--unique_ids', dest='UNIQUE_IDS', default=True, type=string_to_boolean,
+        '--unique_ids', dest='UNIQUE_IDS', default=True, type=string_to_boolean, choices={'true', 'false'},
         help='Create unique read identifiers for paired reads. Information about the relative orientation is left out of the read id and encoded in the pairing information. All /1 reads are sense reads, all /2 reads are anti-sense reads. This option is useful if you want to identify paired reads based on the read ids.'
     )
     args = parser.parse_args()

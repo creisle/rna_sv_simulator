@@ -9,7 +9,8 @@ with open('README.md') as readme_file:
     readme = readme_file.read()
 
 REQUIREMENTS = [
-    'mavis>=2.1.4'
+    'mavis>=2.1.4',
+    'yaml'
 ]
 
 SETUP_REQUIREMENTS = ['pytest-runner']

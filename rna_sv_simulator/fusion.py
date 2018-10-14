@@ -13,6 +13,12 @@ def determine_breakpoint_prime(breakpoint_pair):
     For a given breakpoint return True if break1 is five prime
     for the mutant chr and return false if break2 is five prime
     for the mutant chr
+
+    Args:
+        breakpoint_pair (:class:`~mavis.breakpoint.BreakpointPair`): event
+    
+    Returns:
+        (bool) whether break1 of the pair is the 5'
     '''
     break1 = breakpoint_pair.break1
     break2 = breakpoint_pair.break2
@@ -35,6 +41,14 @@ def determine_breakpoint_prime(breakpoint_pair):
 
 
 def get_chr_seq(breakpoint, reference_genome):
+    '''
+    Args:
+        reference_genome (:class:`dict` of :class:`Bio.SeqRecord` by :class:`str`): dict of reference seq by template/chr name
+        breakpoint (:class:`~mavis.breakpoint.Breakpoint`): single breakpoint
+        
+    Returns:
+        :obj:`str`: portion of the seq defined by the breakpoint
+    '''
     seq = ''
     if breakpoint.orient == ORIENT.LEFT:
         seq = reference_genome[breakpoint.chr].seq[:breakpoint.end]
@@ -50,6 +64,12 @@ def get_reciprocal(breakpoint_pair):
     '''
     Given a breakpoint pair representing a translocation
     return a breakpoint pair representing its reciprocal
+
+    Args:
+        breakpoint_pair (:class:`~mavis.breakpoint.BreakpointPair`): breakpoint pair
+
+    Returns:
+        (:class:`~mavis.breakpoint.BreakpointPair`): reciprocal pair
     '''
     shift1 = 1 if breakpoint_pair.break1.orient == ORIENT.LEFT else -1
     break1 = _breakpoint.Breakpoint(
@@ -77,6 +97,15 @@ def get_reciprocal(breakpoint_pair):
 
 
 def _mutate_translocation(reference_genome, annotations, breakpoint_pair):
+    '''
+    Args:
+        reference_genome (:class:`dict` of :class:`Bio.SeqRecord` by :class:`str`): dict of reference seq by template/chr name
+        annotations (:obj:`list` of :class:`~mavis.annotate.variant.Annotation`): reference annotations
+        breakpoint_pair (:class:`~mavis.breakpoint.BreakpointPair`): event
+
+    Returns:
+        list of :class:`Annotation`: list of the putative annotations
+    '''
     new_annotations = []
 
     break1 = breakpoint_pair.break1
@@ -135,6 +164,11 @@ def shift_gene(gene, offset_func, flipped=False):
     '''
     Given some gene and a function calculating the shift in a genomic position
     return a new gene with positions of the gene and child exons moved
+
+    Args:
+        gene (:class:`~mavis.annotate.genomic.Gene`): the gene to shift the positions of
+        offset_func (): function the maps the old position to the new one
+        flipped (bool): whether the start and end should be flipped
     '''
     if flipped:
         new_strand = STRAND.POS if gene.strand == STRAND.NEG else STRAND.NEG
@@ -173,7 +207,17 @@ def shift_gene(gene, offset_func, flipped=False):
     return new_gene
 
 
+
 def _mutate_continuous(reference_genome, annotations, breakpoint_pair):
+    '''
+    Args:
+        reference_genome (:class:`dict` of :class:`Bio.SeqRecord` by :class:`str`): dict of reference seq by template/chr name
+        annotations (:obj:`list` of :class:`~mavis.annotate.variant.Annotation`): reference annotations
+        breakpoint_pair (:class:`~mavis.breakpoint.BreakpointPair`): event
+
+    Returns:
+        list of :class:`Annotation`: list of the putative annotations
+    '''
     mutant_genes = []
 
     offset_after_func = lambda p: p
@@ -234,6 +278,15 @@ def mutate(reference_genome, annotations, breakpoint_pair):
     '''
     Returns the mutated reference genome sequences as well as the
     shifted annotations and the fusion transcript
+
+    Args:
+        reference_genome (:class:`dict` of :class:`Bio.SeqRecord` by :class:`str`): dict of reference seq by template/chr name
+        annotations (:obj:`list` of :class:`~mavis.annotate.variant.Annotation`): reference annotations
+        breakpoint_pair (:class:`~mavis.breakpoint.BreakpointPair`): event
+
+    Returns:
+        list of :class:`Annotation`: list of the putative annotations
+    
     '''
     if breakpoint_pair.interchromosomal:
         return _mutate_translocation()

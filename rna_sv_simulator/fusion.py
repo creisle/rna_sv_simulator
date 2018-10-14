@@ -196,7 +196,6 @@ def _mutate_continuous(reference_genome, annotations, breakpoint_pair):
     elif breakpoint_pair.event_type == SVTYPE.INV:
         offset = breakpoint_pair.break2.end + breakpoint_pair.break1.start
         if breakpoint_pair.break1.orient == ORIENT.LEFT:
-            print('blargh left')
             offset += 1
             mutant_seq += seq_middle[0] + reverse_complement(seq_middle[1:])
         else:

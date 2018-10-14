@@ -98,11 +98,6 @@ class TestMutateContinuous(unittest.TestCase):
             '-', '+', 'L', 'L', constants.SVTYPE.INV
         )
         exp_seq = self.chr1[:400] + constants.reverse_complement(self.chr1[400:700]) + self.chr1[700:]
-        diffs = []
-        for (i, (exp, act)) in enumerate(zip(exp_seq, new_reference_genome)):
-            if (exp != act):
-                diffs.append((i, (exp, act, self.chr1[i])))
-        print(diffs)
         self.assertEqual(exp_seq, new_reference_genome)
 
     def test_inv_rr_pos_neg(self):

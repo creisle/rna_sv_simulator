@@ -1,7 +1,7 @@
 '''
 create the fusion chromosome and re-mapping of the genes on the mutant chrs
 '''
-from mavis.constants import SVTYPE, ORIENT, STRAND
+from mavis.constants import SVTYPE, ORIENT, STRAND, reverse_complement
 from mavis import constants
 from mavis.annotate import fusion as _fusion
 from mavis.annotate import genomic as _genomic
@@ -175,42 +175,49 @@ def shift_gene(gene, offset_func, flipped=False):
 
 def _mutate_continuous(reference_genome, annotations, breakpoint_pair):
     mutant_genes = []
-    mutant_seq = ''
-    offset = {
-        'before': lambda p: p,
-        'after': lambda p: p,
-        'between': lambda p: p,
-    }
+
+    offset_after_func = lambda p: p
+    offset_btwn_func = lambda p: p
+
+    chr_seq = reference_genome[breakpoint_pair.break1.chr].seq
+    seq_start = chr_seq[0:breakpoint_pair.break1.start - 1]
+    seq_end = chr_seq[breakpoint_pair.break2.end:]
+    seq_middle = chr_seq[breakpoint_pair.break1.start - 1:breakpoint_pair.break2.end]
+    mutant_seq = seq_start
 
     if breakpoint_pair.event_type == SVTYPE.DEL:
         offset = -(breakpoint_pair.break2.end - breakpoint_pair.break1.start - 1)
-        offset['after'] = lambda p: offset + p
+        offset_after_func = lambda p: offset + p
+        mutant_seq += seq_middle[0] + seq_middle[-1]
     elif breakpoint_pair.event_type == SVTYPE.DUP:
         offset = breakpoint_pair.break2.end - breakpoint_pair.break1.start + 1
-        offset['after'] = lambda p: offset + p
+        offset_after_func = lambda p: offset + p
+        mutant_seq += seq_middle*2
+
     elif breakpoint_pair.event_type == SVTYPE.INV:
         offset = breakpoint_pair.break2.end + breakpoint_pair.break1.start
         if breakpoint_pair.break1.orient == ORIENT.LEFT:
-            offset = offset + 1
+            offset += 1
+            mutant_seq += reverse_complement(seq_middle[1:])
         else:
-            offset = offset - 1
+            offset -= 1
+            mutant_seq += reverse_complement(seq_middle[:-1])
 
-        offset_between = lambda p: offset - p
-            
+        offset_btwn_func = lambda p: offset - p
+    mutant_seq += seq_end
+
     for gene in annotations[breakpoint_pair.break1.chr]:
         if gene.end < breakpoint_pair.break1.start:
             # all genes to the left remain the same
-            # offset_func = offset['before']
             mutant_genes.append(gene)
         elif gene.start > breakpoint_pair.break2.end:
             # genes to the right are affected by the event
-            # mutant_gene = shift_gene(gene, offset) #TODO
-            offset_func = offset['after']
+            offset_func = offset_after_func
             mutant_gene = shift_gene(gene, offset_func, flipped=False)
             mutant_genes.append(mutant_gene)
         else:
             # genes in the middle depend on the event type
-            offset_func = offset['between']
+            offset_func = offset_btwn_func
             if breakpoint_pair.event_type == SVTYPE.DEL:
                 pass
             elif breakpoint_pair.event_type == SVTYPE.DUP:
@@ -220,6 +227,8 @@ def _mutate_continuous(reference_genome, annotations, breakpoint_pair):
             elif breakpoint_pair.event_type == SVTYPE.INV:
                 mutant_gene = shift_gene(gene, offset_func, flipped=True)
                 mutant_genes.append(mutant_gene)
+                
+    return mutant_seq, mutant_genes
 
 
 def mutate(reference_genome, annotations, breakpoint_pair):

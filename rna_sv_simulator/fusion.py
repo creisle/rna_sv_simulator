@@ -119,22 +119,52 @@ def shift_gene(gene, offset_func, flipped=False):
 
 
 def _mutate_continuous(reference_genome, annotations, breakpoint_pair):
-    # create the original fusion transcirpt
-    ft = _fusion.FusionTranscript.build()
-
     mutant_genes = []
     mutant_seq = ''
+    offset = {
+        'before': lambda p: p,
+        'after': lambda p: p,
+        'between': lambda p: p,
+    }
 
+    if breakpoint_pair.event_type == SVTYPE.DEL:
+        offset = -(breakpoint_pair.break2.end - breakpoint_pair.break1.start - 1)
+        offset['after'] = lambda p: offset + p
+    elif breakpoint_pair.event_type == SVTYPE.DUP:
+        offset = breakpoint_pair.break2.end - breakpoint_pair.break1.start + 1
+        offset['after'] = lambda p: offset + p
+    elif breakpoint_pair.event_type == SVTYPE.INV:
+        offset = breakpoint_pair.break2.end + breakpoint_pair.break1.start
+        if breakpoint_pair.break1.orient == ORIENT.LEFT:
+            offset = offset + 1
+        else:
+            offset = offset - 1
+
+        offset_between = lambda p: offset - p
+            
     for gene in annotations[breakpoint_pair.break1.chr]:
         if gene.end < breakpoint_pair.break1.start:
             # all genes to the left remain the same
+            # offset_func = offset['before']
             mutant_genes.append(gene)
         elif gene.start > breakpoint_pair.break2.end:
             # genes to the right are affected by the event
-            mutant_gene = shift_gene(gene, ...) # TODO
+            # mutant_gene = shift_gene(gene, offset) #TODO
+            offset_func = offset['after']
+            mutant_gene = shift_gene(gene, offset_func, flipped=False)
+            mutant_genes.append(mutant_gene)
         else:
             # genes in the middle depend on the event type
-            pass
+            offset_func = offset['between']
+            if breakpoint_pair.event_type == SVTYPE.DEL:
+                pass
+            elif breakpoint_pair.event_type == SVTYPE.DUP:
+                mutant_genes.append(gene)
+                mutant_gene = shift_gene(gene, offset_func, flipped=False)
+                mutant_genes.append(mutant_gene)
+            elif breakpoint_pair.event_type == SVTYPE.INV:
+                mutant_gene = shift_gene(gene, offset_func, flipped=True)
+                mutant_genes.append(mutant_gene)
 
 
 def mutate(reference_genome, annotations, breakpoint_pair):

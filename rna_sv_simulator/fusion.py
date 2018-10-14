@@ -184,7 +184,6 @@ def _mutate_continuous(reference_genome, annotations, breakpoint_pair):
     seq_end = chr_seq[breakpoint_pair.break2.end:]
     seq_middle = chr_seq[breakpoint_pair.break1.start - 1:breakpoint_pair.break2.end]
     mutant_seq = seq_start
-
     if breakpoint_pair.event_type == SVTYPE.DEL:
         offset = -(breakpoint_pair.break2.end - breakpoint_pair.break1.start - 1)
         offset_after_func = lambda p: offset + p
@@ -197,11 +196,12 @@ def _mutate_continuous(reference_genome, annotations, breakpoint_pair):
     elif breakpoint_pair.event_type == SVTYPE.INV:
         offset = breakpoint_pair.break2.end + breakpoint_pair.break1.start
         if breakpoint_pair.break1.orient == ORIENT.LEFT:
+            print('blargh left')
             offset += 1
-            mutant_seq += reverse_complement(seq_middle[1:])
+            mutant_seq += seq_middle[0] + reverse_complement(seq_middle[1:])
         else:
             offset -= 1
-            mutant_seq += reverse_complement(seq_middle[:-1])
+            mutant_seq += reverse_complement(seq_middle[:-1]) + seq_middle[-1]
 
         offset_btwn_func = lambda p: offset - p
     mutant_seq += seq_end
@@ -227,7 +227,7 @@ def _mutate_continuous(reference_genome, annotations, breakpoint_pair):
             elif breakpoint_pair.event_type == SVTYPE.INV:
                 mutant_gene = shift_gene(gene, offset_func, flipped=True)
                 mutant_genes.append(mutant_gene)
-                
+
     return mutant_seq, mutant_genes
 
 

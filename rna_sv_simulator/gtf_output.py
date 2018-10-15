@@ -38,7 +38,7 @@ def output_gtf_file(annotations, output_path):
                 strand = gene.strand
                 row['attribute'].update({
                     'gene_id': gene.name,
-                    'gene_name': ','join(gene.aliases),
+                    'gene_name': ','.join(gene.aliases),
                     'gene_start': gene.start,
                     'gene_end': gene.end
                 })
@@ -49,9 +49,8 @@ def output_gtf_file(annotations, output_path):
                         'transcript_start': pre_transcript.start,
                         'transcript_end': pre_transcript.end
                     })
-
-                    for spliced_transcript in transcript.spliced_transcripts:
-                        for exon in spliced_transcript.exons:
+                    for spliced_transcript in pre_transcript.spliced_transcripts:
+                        for i, exon in enumerate(spliced_transcript.exons):
                             row.update({
                                 'start': exon.start,
                                 'end': exon.end
@@ -60,7 +59,7 @@ def output_gtf_file(annotations, output_path):
                             start_pos = str(exon.start)
                             end_pos = str(exon.end)
                             row['attribute'].update({
-                                'exon_number': pre_transcript.exon_number(exon),
+                                'exon_number': i + 1,
                                 'exon_id': exon.name
                             })
 

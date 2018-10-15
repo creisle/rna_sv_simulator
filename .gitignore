@@ -120,12 +120,15 @@ dmypy.json
 # mac stuff
 .DS_STORE
 
-# Runtime files
+# Flux Simulator files
 *.par
 *.pro
 *.lib
+
+# Archives and compressed runtime files
 *.gz
 *.tgz
+*.tar
 
 # Bioinformatics formats
 *.fasta

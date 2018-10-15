@@ -114,6 +114,23 @@ dmypy.json
 .idea
 .vscode
 .vs
+*~
+\#*
 
 # mac stuff
 .DS_STORE
+
+# Runtime files
+*.par
+*.pro
+*.lib
+*.gz
+*.tgz
+
+# Bioinformatics formats
+*.fasta
+*.fastq
+*.gtf
+*.gff
+*.bam
+*.bed
